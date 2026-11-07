@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="de">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#f6f6f4">
+	<title>Meine Ziele</title>
+	<style>
+		:root {
+			color-scheme: light;
+			font-family: "Segoe UI", Arial, sans-serif;
+			color: #242522;
+			background: #f6f6f4;
+			font-synthesis: none;
+			text-rendering: optimizeLegibility;
+			-webkit-font-smoothing: antialiased;
+			--muted: #777972;
+			--line: #e6e7e2;
+			--surface: #fff;
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			min-width: 320px;
+			min-height: 100vh;
+			margin: 0;
+			padding: 72px 24px;
+		}
+
+		main {
+			width: min(100%, 620px);
+			margin: 0 auto;
+		}
+
+		header { margin-bottom: 34px; }
+
+		h1 {
+			margin: 0 0 8px;
+			font-size: 34px;
+			font-weight: 650;
+			line-height: 1.15;
+		}
+
+		header p {
+			margin: 0;
+			color: var(--muted);
+			font-size: 15px;
+			line-height: 1.5;
+		}
+
+		.todo-panel {
+			overflow: hidden;
+			border: 1px solid var(--line);
+			border-radius: 10px;
+			background: var(--surface);
+		}
+
+		form {
+			display: flex;
+			gap: 10px;
+			padding: 16px;
+			border-bottom: 1px solid var(--line);
+		}
+
+		input[type="text"] {
+			min-width: 0;
+			flex: 1;
+			padding: 12px 13px;
+			border: 1px solid #dedfda;
+			border-radius: 6px;
+			background: #fff;
+			color: inherit;
+			font: inherit;
+			font-size: 15px;
+		}
+
+		input[type="text"]::placeholder { color: #92948e; }
+
+		input[type="text"]:focus-visible,
+		button:focus-visible,
+		input[type="checkbox"]:focus-visible {
+			outline: 2px solid #565850;
+			outline-offset: 2px;
+		}
+
+		button {
+			border: 0;
+			border-radius: 6px;
+			font: inherit;
+			cursor: pointer;
+		}
+
+		.add-button {
+			padding: 0 17px;
+			background: #292a27;
+			color: #fff;
+			font-size: 14px;
+			font-weight: 550;
+		}
+
+		.add-button:hover { background: #444640; }
+
+		.task-list {
+			margin: 0;
+			padding: 0 16px;
+			list-style: none;
+		}
+
+		.task {
+			display: flex;
+			min-height: 62px;
+			align-items: center;
+			gap: 12px;
+			border-bottom: 1px solid var(--line);
+		}
+
+		.task:last-child { border-bottom: 0; }
+
+		.task-checkbox {
+			width: 18px;
+			height: 18px;
+			flex: 0 0 auto;
+			margin: 0;
+			accent-color: #3d3f39;
+			cursor: pointer;
+		}
+
+		.task-text {
+			min-width: 0;
+			flex: 1;
+			overflow-wrap: anywhere;
+			font-size: 15px;
+			line-height: 1.5;
+		}
+
+		.task.is-complete .task-text {
+			color: #999b95;
+			text-decoration: line-through;
+			text-decoration-thickness: 1px;
+		}
+
+		.delete-button {
+			flex: 0 0 auto;
+			padding: 8px 4px 8px 8px;
+			background: transparent;
+			color: var(--muted);
+			font-size: 13px;
+		}
+
+		.delete-button:hover { color: #242522; }
+
+		.empty-state {
+			padding: 30px 16px;
+			color: var(--muted);
+			font-size: 14px;
+			text-align: center;
+		}
+
+		.summary {
+			display: flex;
+			justify-content: space-between;
+			gap: 12px;
+			padding: 15px 17px;
+			border-top: 1px solid var(--line);
+			color: var(--muted);
+			font-size: 13px;
+		}
+
+		@media (max-width: 520px) {
+			body { padding: 44px 16px; }
+			header { margin-bottom: 26px; }
+			h1 { font-size: 30px; }
+			form { gap: 8px; padding: 12px; }
+			.add-button { padding: 0 13px; }
+			.task-list { padding: 0 12px; }
+			.summary { padding: 14px 13px; }
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<header>
+			<h1>Meine Ziele</h1>
+			<p>Jeder Schritt bringt dich näher ans Ziel.</p>
+		</header>
+
+		<section class="todo-panel" aria-label="Ziele und Aufgaben">
+			<form id="todo-form">
+				<input id="todo-input" type="text" placeholder="Ein neues Ziel hinzufügen …" aria-label="Neues Ziel" maxlength="300" required>
+				<button class="add-button" type="submit">Hinzufügen</button>
+			</form>
+			<ul class="task-list" id="task-list" aria-live="polite"></ul>
+			<div class="summary" aria-live="polite">
+				<span id="open-count">0 offen</span>
+				<span id="done-count">0 erledigt</span>
+			</div>
+		</section>
+	</main>
+
+	<script>
+		(() => {
+			const storageKey = "meine-ziele-tasks";
+			const form = document.getElementById("todo-form");
+			const input = document.getElementById("todo-input");
+			const list = document.getElementById("task-list");
+			const openCount = document.getElementById("open-count");
+			const doneCount = document.getElementById("done-count");
+			let tasks = [];
+
+			try {
+				const savedTasks = JSON.parse(localStorage.getItem(storageKey) || "[]");
+				if (Array.isArray(savedTasks)) {
+					tasks = savedTasks.filter(task =>
+						task && typeof task.id === "string" && typeof task.text === "string" && typeof task.done === "boolean"
+					);
+				}
+			} catch {
+				tasks = [];
+			}
+
+			function saveTasks() {
+				try {
+					localStorage.setItem(storageKey, JSON.stringify(tasks));
+				} catch {
+					// The list remains usable if browser storage is unavailable.
+				}
+			}
+
+			function render() {
+				list.replaceChildren();
+
+				if (tasks.length === 0) {
+					const empty = document.createElement("li");
+					empty.className = "empty-state";
+					empty.textContent = "Noch keine Ziele. Was möchtest du erreichen?";
+					list.append(empty);
+				}
+
+				for (const task of tasks) {
+					const item = document.createElement("li");
+					item.className = `task${task.done ? " is-complete" : ""}`;
+
+					const checkbox = document.createElement("input");
+					checkbox.className = "task-checkbox";
+					checkbox.type = "checkbox";
+					checkbox.checked = task.done;
+					checkbox.setAttribute("aria-label", `${task.text} als erledigt markieren`);
+					checkbox.addEventListener("change", () => {
+						task.done = checkbox.checked;
+						saveTasks();
+						render();
+					});
+
+					const text = document.createElement("span");
+					text.className = "task-text";
+					text.textContent = task.text;
+
+					const deleteButton = document.createElement("button");
+					deleteButton.className = "delete-button";
+					deleteButton.type = "button";
+					deleteButton.textContent = "Entfernen";
+					deleteButton.setAttribute("aria-label", `${task.text} löschen`);
+					deleteButton.addEventListener("click", () => {
+						tasks = tasks.filter(currentTask => currentTask.id !== task.id);
+						saveTasks();
+						render();
+					});
+
+					item.append(checkbox, text, deleteButton);
+					list.append(item);
+				}
+
+				const completed = tasks.filter(task => task.done).length;
+				openCount.textContent = `${tasks.length - completed} offen`;
+				doneCount.textContent = `${completed} erledigt`;
+			}
+
+			form.addEventListener("submit", event => {
+				event.preventDefault();
+				const text = input.value.trim();
+				if (!text) return;
+
+				tasks.push({ id: `${Date.now()}-${Math.random()}`, text, done: false });
+				saveTasks();
+				render();
+				form.reset();
+				input.focus();
+			});
+
+			render();
+		})();
+	</script>
+</body>
+</html>
