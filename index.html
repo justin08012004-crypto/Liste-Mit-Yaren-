@@ -193,8 +193,40 @@
 
 		.task-list {
 			margin: 0;
-			padding: 0 16px;
+			padding: 0 14px;
 			list-style: none;
+		}
+
+		.task-board {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.task-column + .task-column { border-left: 1px solid var(--line); }
+
+		.column-heading {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin: 0;
+			padding: 16px 16px 10px;
+			color: var(--muted);
+			font-size: 11px;
+			font-weight: 650;
+			letter-spacing: 1px;
+			text-transform: uppercase;
+		}
+
+		.task-column:first-child .column-heading { color: var(--accent); }
+		.task-column:last-child .column-heading { color: var(--accent-cool); }
+
+		.column-count {
+			min-width: 24px;
+			padding: 4px 7px;
+			border: 1px solid currentColor;
+			border-radius: 99px;
+			font-size: 10px;
+			text-align: center;
 		}
 
 		.task {
@@ -245,9 +277,9 @@
 		.delete-button:hover { color: var(--accent-warm); }
 
 		.empty-state {
-			padding: 30px 16px;
+			padding: 24px 8px;
 			color: var(--muted);
-			font-size: 14px;
+			font-size: 12px;
 			text-align: center;
 		}
 
@@ -309,8 +341,15 @@
 			h1 { font-size: 36px; }
 			form { gap: 8px; padding: 12px; }
 			.add-button { padding: 0 13px; }
-			.task-list { padding: 0 12px; }
 			.summary { padding: 14px 13px 15px; }
+		}
+
+		@media (max-width: 600px) {
+			.task-board { grid-template-columns: 1fr; }
+			.task-column + .task-column {
+				border-top: 1px solid var(--line);
+				border-left: 0;
+			}
 		}
 	</style>
 </head>
@@ -327,11 +366,20 @@
 				<input id="todo-input" type="text" placeholder="Ein neues Ziel hinzufügen …" aria-label="Neues Ziel" maxlength="300" required>
 				<button class="add-button" type="submit">Hinzufügen</button>
 			</form>
-			<ul class="task-list" id="task-list" aria-live="polite"></ul>
+			<div class="task-board">
+				<section class="task-column" aria-labelledby="open-heading">
+					<h2 class="column-heading" id="open-heading">Offen <span class="column-count" id="open-count">0</span></h2>
+					<ul class="task-list" id="open-list" aria-live="polite"></ul>
+				</section>
+				<section class="task-column" aria-labelledby="done-heading">
+					<h2 class="column-heading" id="done-heading">Erledigt <span class="column-count" id="done-count">0</span></h2>
+					<ul class="task-list" id="done-list" aria-live="polite"></ul>
+				</section>
+			</div>
 			<div class="summary" aria-live="polite">
 				<div class="summary-labels">
-					<span id="open-count">0 offen</span>
-					<span id="done-count">0 erledigt</span>
+					<span>Gesamtfortschritt</span>
+					<span id="progress-label">0 %</span>
 				</div>
 				<div class="progress-track" role="progressbar" aria-label="Fortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
 					<div class="progress-fill" id="progress-fill"></div>
@@ -345,9 +393,11 @@
 			const storageKey = "meine-ziele-tasks";
 			const form = document.getElementById("todo-form");
 			const input = document.getElementById("todo-input");
-			const list = document.getElementById("task-list");
+			const openList = document.getElementById("open-list");
+			const doneList = document.getElementById("done-list");
 			const openCount = document.getElementById("open-count");
 			const doneCount = document.getElementById("done-count");
+			const progressLabel = document.getElementById("progress-label");
 			const progressTrack = document.querySelector(".progress-track");
 			const progressFill = document.getElementById("progress-fill");
 			let tasks = [];
@@ -372,13 +422,21 @@
 			}
 
 			function render() {
-				list.replaceChildren();
+				openList.replaceChildren();
+				doneList.replaceChildren();
 
-				if (tasks.length === 0) {
+				if (!tasks.some(task => !task.done)) {
 					const empty = document.createElement("li");
 					empty.className = "empty-state";
-					empty.textContent = "Noch keine Ziele. Was möchtest du erreichen?";
-					list.append(empty);
+					empty.textContent = "Keine offenen Ziele";
+					openList.append(empty);
+				}
+
+				if (!tasks.some(task => task.done)) {
+					const empty = document.createElement("li");
+					empty.className = "empty-state";
+					empty.textContent = "Noch nichts erledigt";
+					doneList.append(empty);
 				}
 
 				for (const task of tasks) {
@@ -412,13 +470,14 @@
 					});
 
 					item.append(checkbox, text, deleteButton);
-					list.append(item);
+					(task.done ? doneList : openList).append(item);
 				}
 
 				const completed = tasks.filter(task => task.done).length;
-				openCount.textContent = `${tasks.length - completed} offen`;
-				doneCount.textContent = `${completed} erledigt`;
+				openCount.textContent = String(tasks.length - completed);
+				doneCount.textContent = String(completed);
 				const progress = tasks.length === 0 ? 0 : Math.round((completed / tasks.length) * 100);
+				progressLabel.textContent = `${progress} %`;
 				progressFill.style.width = `${progress}%`;
 				progressTrack.setAttribute("aria-valuenow", String(progress));
 			}
