@@ -3,21 +3,23 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="theme-color" content="#10120f">
-	<title>Meine Ziele</title>
+		<meta name="theme-color" content="#0b1720">
+	<title>Ziele von Yaren und Justin</title>
 	<style>
 		:root {
 			color-scheme: dark;
 			font-family: "Segoe UI", Arial, sans-serif;
-			color: #eceee8;
-			background: #10120f;
+			color: #edf5f2;
+			background: #0b1720;
 			font-synthesis: none;
 			text-rendering: optimizeLegibility;
 			-webkit-font-smoothing: antialiased;
-			--muted: #9da397;
-			--line: #30352d;
-			--surface: #191c17;
-			--accent: #c8f169;
+			--muted: #9db1b5;
+			--line: #294147;
+			--surface: #121e22;
+			--accent: #61e6f4;
+			--accent-cool: #c5f36c;
+			--accent-warm: #ff9b72;
 		}
 
 		* { box-sizing: border-box; }
@@ -27,7 +29,7 @@
 			min-height: 100vh;
 			margin: 0;
 			padding: 84px 24px;
-			background: radial-gradient(ellipse at 50% 0%, #22271d 0%, #171a15 38%, #10120f 78%);
+			background: linear-gradient(132deg, #09131d 0%, #0c2025 38%, #14231f 68%, #191b18 100%);
 		}
 
 		body::before,
@@ -41,10 +43,10 @@
 		body::before {
 			inset: 0;
 			background-image:
-				linear-gradient(#c8f1690a 1px, transparent 1px),
-				linear-gradient(90deg, #c8f1690a 1px, transparent 1px);
-			background-size: 64px 64px;
-			mask-image: radial-gradient(ellipse at 50% 20%, #000 0%, transparent 76%);
+				linear-gradient(#61e6f410 1px, transparent 1px),
+				linear-gradient(90deg, #61e6f410 1px, transparent 1px);
+			background-size: 58px 58px;
+			mask-image: linear-gradient(to bottom, #000 0%, #000b 48%, transparent 100%);
 		}
 
 		body::after {
@@ -52,9 +54,13 @@
 			right: -180px;
 			width: 560px;
 			height: 560px;
-			border: 1px solid #c8f1691c;
+			border: 1px solid #61e6f42b;
 			border-radius: 50%;
-			background: repeating-radial-gradient(circle, transparent 0 48px, #c8f16912 49px, transparent 50px 82px);
+			background:
+				repeating-radial-gradient(circle, transparent 0 48px, #61e6f41a 49px, transparent 50px 82px),
+				repeating-radial-gradient(circle, transparent 0 74px, #c5f36c16 75px, transparent 76px 124px),
+				conic-gradient(from 25deg, transparent 0deg 62deg, #61e6f429 62deg 63deg, transparent 64deg 177deg, #ff9b7224 178deg 179deg, transparent 180deg 360deg);
+			animation: ring-turn 80s linear infinite;
 		}
 
 		main {
@@ -64,7 +70,10 @@
 			margin: 0 auto;
 		}
 
-		header { margin-bottom: 30px; }
+		header {
+			margin-bottom: 30px;
+			animation: rise-in 500ms ease-out both;
+		}
 
 		.eyebrow {
 			display: flex;
@@ -82,16 +91,24 @@
 			width: 7px;
 			height: 7px;
 			border-radius: 50%;
-			background: var(--accent);
+			background: linear-gradient(135deg, var(--accent), var(--accent-cool));
+			box-shadow: 0 0 14px #61e6f455;
 			content: "";
 		}
 
 		h1 {
 			margin: 0 0 9px;
-			font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
-			font-size: 48px;
-			font-weight: 500;
+			font-family: "Bahnschrift", "Segoe UI Variable", "Segoe UI", sans-serif;
+			font-size: 42px;
+			font-weight: 650;
 			line-height: 1.08;
+		}
+
+		.title-highlight {
+			background: linear-gradient(95deg, var(--accent), var(--accent-cool));
+			background-clip: text;
+			color: transparent;
+			-webkit-background-clip: text;
 		}
 
 		header p {
@@ -102,11 +119,24 @@
 		}
 
 		.todo-panel {
+			position: relative;
 			overflow: hidden;
-			border: 1px solid #343a30;
+			isolation: isolate;
+			border: 1px solid #2b454a;
 			border-radius: 12px;
 			background: var(--surface);
-			box-shadow: 0 24px 70px #08090766;
+			box-shadow: 0 24px 70px #03080c99, 0 0 38px #1bc8d40d;
+			animation: rise-in 600ms 90ms ease-out both;
+		}
+
+		.todo-panel::before {
+			position: absolute;
+			top: 0;
+			left: 12%;
+			width: 76%;
+			height: 1px;
+			background: linear-gradient(90deg, transparent, var(--accent), var(--accent-cool), var(--accent-warm), transparent);
+			content: "";
 		}
 
 		form {
@@ -120,15 +150,15 @@
 			min-width: 0;
 			flex: 1;
 			padding: 12px 13px;
-			border: 1px solid #3a4035;
+			border: 1px solid #34525a;
 			border-radius: 7px;
-			background: #11140f;
+			background: #0d171a;
 			color: inherit;
 			font: inherit;
 			font-size: 15px;
 		}
 
-		input[type="text"]::placeholder { color: #777d71; }
+		input[type="text"]::placeholder { color: #718b91; }
 
 		input[type="text"]:focus-visible,
 		button:focus-visible,
@@ -146,13 +176,20 @@
 
 		.add-button {
 			padding: 0 19px;
-			background: var(--accent);
-			color: #1a1d15;
+			background: linear-gradient(110deg, var(--accent), var(--accent-cool));
+			color: #102023;
 			font-size: 14px;
 			font-weight: 650;
+			transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
 		}
 
-		.add-button:hover { background: #d7ff83; }
+		.add-button:hover {
+			transform: translateY(-1px);
+			background: #d7ff83;
+			box-shadow: 0 5px 22px #61e6f438;
+		}
+
+		.add-button:active { transform: translateY(0); }
 
 		.task-list {
 			margin: 0;
@@ -166,7 +203,10 @@
 			align-items: center;
 			gap: 12px;
 			border-bottom: 1px solid var(--line);
+			transition: background-color 160ms ease;
 		}
+
+		.task:hover { background: #61e6f40d; }
 
 		.task:last-child { border-bottom: 0; }
 
@@ -202,7 +242,7 @@
 			font-size: 13px;
 		}
 
-		.delete-button:hover { color: var(--accent); }
+		.delete-button:hover { color: var(--accent-warm); }
 
 		.empty-state {
 			padding: 30px 16px;
@@ -228,15 +268,33 @@
 			margin-top: 13px;
 			overflow: hidden;
 			border-radius: 99px;
-			background: #34392f;
+			background: #2b4146;
 		}
 
 		.progress-fill {
 			width: 0;
 			height: 100%;
 			border-radius: inherit;
-			background: var(--accent);
-			transition: width 180ms ease-out;
+			background: linear-gradient(90deg, var(--accent), var(--accent-cool), var(--accent-warm));
+			box-shadow: 0 0 10px #61e6f455;
+			transition: width 220ms ease-out;
+		}
+
+		@keyframes rise-in {
+			from { opacity: 0; transform: translateY(12px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+
+		@keyframes ring-turn {
+			to { transform: rotate(360deg); }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after {
+				animation-duration: 0.01ms !important;
+				animation-iteration-count: 1 !important;
+				transition-duration: 0.01ms !important;
+			}
 		}
 
 		@media (max-width: 520px) {
@@ -248,7 +306,7 @@
 				height: 430px;
 			}
 			header { margin-bottom: 24px; }
-			h1 { font-size: 40px; }
+			h1 { font-size: 36px; }
 			form { gap: 8px; padding: 12px; }
 			.add-button { padding: 0 13px; }
 			.task-list { padding: 0 12px; }
@@ -260,7 +318,7 @@
 	<main>
 		<header>
 			<div class="eyebrow">Dein Fokus</div>
-			<h1>Meine Ziele</h1>
+			<h1>Ziele von <span class="title-highlight">Yaren und Justin</span></h1>
 			<p>Jeder Schritt bringt dich näher ans Ziel.</p>
 		</header>
 
