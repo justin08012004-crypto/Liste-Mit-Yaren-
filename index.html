@@ -3,20 +3,21 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="theme-color" content="#f6f6f4">
+		<meta name="theme-color" content="#10120f">
 	<title>Meine Ziele</title>
 	<style>
 		:root {
-			color-scheme: light;
+			color-scheme: dark;
 			font-family: "Segoe UI", Arial, sans-serif;
-			color: #242522;
-			background: #f6f6f4;
+			color: #eceee8;
+			background: #10120f;
 			font-synthesis: none;
 			text-rendering: optimizeLegibility;
 			-webkit-font-smoothing: antialiased;
-			--muted: #777972;
-			--line: #e6e7e2;
-			--surface: #fff;
+			--muted: #9da397;
+			--line: #30352d;
+			--surface: #191c17;
+			--accent: #c8f169;
 		}
 
 		* { box-sizing: border-box; }
@@ -25,21 +26,72 @@
 			min-width: 320px;
 			min-height: 100vh;
 			margin: 0;
-			padding: 72px 24px;
+			padding: 84px 24px;
+			background: radial-gradient(ellipse at 50% 0%, #22271d 0%, #171a15 38%, #10120f 78%);
+		}
+
+		body::before,
+		body::after {
+			position: fixed;
+			z-index: 0;
+			pointer-events: none;
+			content: "";
+		}
+
+		body::before {
+			inset: 0;
+			background-image:
+				linear-gradient(#c8f1690a 1px, transparent 1px),
+				linear-gradient(90deg, #c8f1690a 1px, transparent 1px);
+			background-size: 64px 64px;
+			mask-image: radial-gradient(ellipse at 50% 20%, #000 0%, transparent 76%);
+		}
+
+		body::after {
+			top: -235px;
+			right: -180px;
+			width: 560px;
+			height: 560px;
+			border: 1px solid #c8f1691c;
+			border-radius: 50%;
+			background: repeating-radial-gradient(circle, transparent 0 48px, #c8f16912 49px, transparent 50px 82px);
 		}
 
 		main {
+			position: relative;
+			z-index: 1;
 			width: min(100%, 620px);
 			margin: 0 auto;
 		}
 
-		header { margin-bottom: 34px; }
+		header { margin-bottom: 30px; }
+
+		.eyebrow {
+			display: flex;
+			align-items: center;
+			gap: 9px;
+			margin-bottom: 14px;
+			color: var(--accent);
+			font-size: 11px;
+			font-weight: 650;
+			letter-spacing: 1.4px;
+			text-transform: uppercase;
+		}
+
+		.eyebrow::before {
+			width: 7px;
+			height: 7px;
+			border-radius: 50%;
+			background: var(--accent);
+			content: "";
+		}
 
 		h1 {
-			margin: 0 0 8px;
-			font-size: 34px;
-			font-weight: 650;
-			line-height: 1.15;
+			margin: 0 0 9px;
+			font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+			font-size: 48px;
+			font-weight: 500;
+			line-height: 1.08;
 		}
 
 		header p {
@@ -51,15 +103,16 @@
 
 		.todo-panel {
 			overflow: hidden;
-			border: 1px solid var(--line);
-			border-radius: 10px;
+			border: 1px solid #343a30;
+			border-radius: 12px;
 			background: var(--surface);
+			box-shadow: 0 24px 70px #08090766;
 		}
 
 		form {
 			display: flex;
 			gap: 10px;
-			padding: 16px;
+			padding: 18px;
 			border-bottom: 1px solid var(--line);
 		}
 
@@ -67,20 +120,20 @@
 			min-width: 0;
 			flex: 1;
 			padding: 12px 13px;
-			border: 1px solid #dedfda;
-			border-radius: 6px;
-			background: #fff;
+			border: 1px solid #3a4035;
+			border-radius: 7px;
+			background: #11140f;
 			color: inherit;
 			font: inherit;
 			font-size: 15px;
 		}
 
-		input[type="text"]::placeholder { color: #92948e; }
+		input[type="text"]::placeholder { color: #777d71; }
 
 		input[type="text"]:focus-visible,
 		button:focus-visible,
 		input[type="checkbox"]:focus-visible {
-			outline: 2px solid #565850;
+			outline: 2px solid var(--accent);
 			outline-offset: 2px;
 		}
 
@@ -92,14 +145,14 @@
 		}
 
 		.add-button {
-			padding: 0 17px;
-			background: #292a27;
-			color: #fff;
+			padding: 0 19px;
+			background: var(--accent);
+			color: #1a1d15;
 			font-size: 14px;
-			font-weight: 550;
+			font-weight: 650;
 		}
 
-		.add-button:hover { background: #444640; }
+		.add-button:hover { background: #d7ff83; }
 
 		.task-list {
 			margin: 0;
@@ -109,7 +162,7 @@
 
 		.task {
 			display: flex;
-			min-height: 62px;
+			min-height: 66px;
 			align-items: center;
 			gap: 12px;
 			border-bottom: 1px solid var(--line);
@@ -122,7 +175,7 @@
 			height: 18px;
 			flex: 0 0 auto;
 			margin: 0;
-			accent-color: #3d3f39;
+			accent-color: var(--accent);
 			cursor: pointer;
 		}
 
@@ -135,9 +188,10 @@
 		}
 
 		.task.is-complete .task-text {
-			color: #999b95;
+			color: #858b7e;
 			text-decoration: line-through;
 			text-decoration-thickness: 1px;
+			text-decoration-color: #858b7e;
 		}
 
 		.delete-button {
@@ -148,7 +202,7 @@
 			font-size: 13px;
 		}
 
-		.delete-button:hover { color: #242522; }
+		.delete-button:hover { color: var(--accent); }
 
 		.empty-state {
 			padding: 30px 16px;
@@ -158,29 +212,54 @@
 		}
 
 		.summary {
+			padding: 16px 18px 17px;
+		}
+
+		.summary-labels {
 			display: flex;
 			justify-content: space-between;
 			gap: 12px;
-			padding: 15px 17px;
-			border-top: 1px solid var(--line);
 			color: var(--muted);
 			font-size: 13px;
 		}
 
+		.progress-track {
+			height: 4px;
+			margin-top: 13px;
+			overflow: hidden;
+			border-radius: 99px;
+			background: #34392f;
+		}
+
+		.progress-fill {
+			width: 0;
+			height: 100%;
+			border-radius: inherit;
+			background: var(--accent);
+			transition: width 180ms ease-out;
+		}
+
 		@media (max-width: 520px) {
-			body { padding: 44px 16px; }
-			header { margin-bottom: 26px; }
-			h1 { font-size: 30px; }
+			body { padding: 54px 16px; }
+			body::after {
+				top: -170px;
+				right: -220px;
+				width: 430px;
+				height: 430px;
+			}
+			header { margin-bottom: 24px; }
+			h1 { font-size: 40px; }
 			form { gap: 8px; padding: 12px; }
 			.add-button { padding: 0 13px; }
 			.task-list { padding: 0 12px; }
-			.summary { padding: 14px 13px; }
+			.summary { padding: 14px 13px 15px; }
 		}
 	</style>
 </head>
 <body>
 	<main>
 		<header>
+			<div class="eyebrow">Dein Fokus</div>
 			<h1>Meine Ziele</h1>
 			<p>Jeder Schritt bringt dich näher ans Ziel.</p>
 		</header>
@@ -192,8 +271,13 @@
 			</form>
 			<ul class="task-list" id="task-list" aria-live="polite"></ul>
 			<div class="summary" aria-live="polite">
-				<span id="open-count">0 offen</span>
-				<span id="done-count">0 erledigt</span>
+				<div class="summary-labels">
+					<span id="open-count">0 offen</span>
+					<span id="done-count">0 erledigt</span>
+				</div>
+				<div class="progress-track" role="progressbar" aria-label="Fortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+					<div class="progress-fill" id="progress-fill"></div>
+				</div>
 			</div>
 		</section>
 	</main>
@@ -206,6 +290,8 @@
 			const list = document.getElementById("task-list");
 			const openCount = document.getElementById("open-count");
 			const doneCount = document.getElementById("done-count");
+			const progressTrack = document.querySelector(".progress-track");
+			const progressFill = document.getElementById("progress-fill");
 			let tasks = [];
 
 			try {
@@ -274,6 +360,9 @@
 				const completed = tasks.filter(task => task.done).length;
 				openCount.textContent = `${tasks.length - completed} offen`;
 				doneCount.textContent = `${completed} erledigt`;
+				const progress = tasks.length === 0 ? 0 : Math.round((completed / tasks.length) * 100);
+				progressFill.style.width = `${progress}%`;
+				progressTrack.setAttribute("aria-valuenow", String(progress));
 			}
 
 			form.addEventListener("submit", event => {
